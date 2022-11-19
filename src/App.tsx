@@ -14,7 +14,7 @@ import LoginPage from "./routes/login/login-page";
 import DashboardPage from "./routes/dashboard/dashboard-page";
 
 export interface UserLogin {
-    id: number;
+    id: string;
 }
 
 export interface AuthContextType {
@@ -41,7 +41,7 @@ export const useAuth = () => {
 }
 
 function AuthProvider({children}: { children: React.ReactNode }) {
-    let [user, setUser] = React.useState<UserLogin>(null);
+    let [user, setUser] = React.useState<UserLogin | null>(null);
 
     let signin = (newUser: UserLogin, callback: VoidFunction) => {
         return authProvider.signin(() => {
