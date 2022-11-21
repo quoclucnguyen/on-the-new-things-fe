@@ -2,16 +2,17 @@ import {Card} from "@nextui-org/react";
 import {Button, Form, Input} from "antd";
 import {GoogleOutlined} from "@ant-design/icons";
 import {signInWithPopup, GoogleAuthProvider} from "firebase/auth";
-import {auth} from "../../main";
 import {useAuth} from "../../App";
 import {useNavigate} from "react-router-dom";
-
+import {auth} from "../../firebase-config";
+import localForage from "localforage";
 
 export default function LoginPage() {
     const appAuth = useAuth();
     const navigate = useNavigate();
     const handleBtnLoginViaGoogleClick = () => {
         const provider = new GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly')
         signInWithPopup(auth, provider)
             .then((result) => {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -20,9 +21,17 @@ export default function LoginPage() {
                 const userLogin = {
                     id: user.uid
                 }
-                appAuth.signin(userLogin, () => {
-                    navigate("/")
-                }); 
+//                console.log(typeof (user));
+                const userFirebase = {
+                    ...user
+                }
+
+                console.log(userFirebase);
+                localForage.setItem('user', user.toJSON()).then(() => {
+                    appAuth.signin(userLogin, () => {
+                        navigate("/")
+                    });
+                })
                 // ...
             }).catch((error) => {
             const errorCode = error.code;

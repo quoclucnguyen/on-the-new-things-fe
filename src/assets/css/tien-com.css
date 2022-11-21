@@ -1,0 +1,7 @@
+.paid {
+    background-color: green;
+    text-align: center;
+    color: white;
+    border-radius: 1rem;
+    width: 100%;
+}

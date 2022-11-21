@@ -16,7 +16,7 @@ const MainLayout = () => {
     const [collapsed, setCollapsed] = useState(true);
 
     return (
-        <Layout>
+        <Layout style={{minHeight: '100vh'}}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <div className="logo"/>
                 <Menu
