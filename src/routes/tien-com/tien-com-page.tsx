@@ -3,7 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { Card, Grid } from "@nextui-org/react";
 import { RcFile } from "antd/es/upload";
 import Excel from 'exceljs';
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { useEffect, useState } from "react";
 import '../../assets/css/tien-com.css';
 import { Bar } from '@ant-design/plots';
