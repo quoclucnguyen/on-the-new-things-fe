@@ -1,7 +1,9 @@
 .paid {
-    background-color: green;
+    color: green;
+    font-weight: bold;
     text-align: center;
-    color: white;
-    border-radius: 1rem;
-    width: 100%;
+}
+
+.not-pay {
+    text-align: center;
 }

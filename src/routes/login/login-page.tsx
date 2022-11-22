@@ -19,7 +19,9 @@ export default function LoginPage() {
                 const token = credential?.accessToken;
                 const user = result.user;
                 const userLogin = {
-                    id: user.uid
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
                 }
 //                console.log(typeof (user));
                 const userFirebase = {
