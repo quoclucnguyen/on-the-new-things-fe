@@ -19,6 +19,7 @@ interface Transaction {
     person: Person;
     money: number;
     pay?: boolean;
+    delivery?: boolean;
 }
 
 interface Day {
@@ -92,10 +93,11 @@ export default function TienComPage() {
                 reader.onload = async (ev) => {
                     const workbook = new Excel.Workbook();
                     await workbook.xlsx.load(reader.result as unknown as any);
-                    const worksheet = workbook.getWorksheet("Tiền cơm");
+                    const worksheeTienCom = workbook.getWorksheet("Tiền cơm");
+                    const worksheeDiLayCom = workbook.getWorksheet("Đi lấy cơm");
                     const people: Person[] = [];
                     const data: Day[] = [];
-                    worksheet.eachRow((row, rowNumber) => {
+                    worksheeTienCom.eachRow((row, rowNumber) => {
                         if (rowNumber > 1) {
                             const values = row?.model?.cells?.map(cell => cell?.value?.toString().trim());
                             if (values != undefined && values?.length > 0) {
@@ -110,9 +112,6 @@ export default function TienComPage() {
                                 if (rowNumber > 2) {
                                     const day = dayjs(values[0] ?? '').format('DD/MM/YYYY');
                                     const peopleTmp: Transaction[] = [];
-                                    if (day === '12/12/2021') {
-                                        console.log(row?.model?.cells);
-                                    }
                                     row?.model?.cells?.forEach((item, index) => {
                                         const person = people.find(person => person.label == Array.from(item?.address.toString())[0]);
                                         if (person) {
@@ -130,7 +129,35 @@ export default function TienComPage() {
                             }
                         }
                     });
-                    console.log(data);
+                    const peopleDiLayCom: Person[] = [];
+                    worksheeDiLayCom.eachRow((row, rowNumber: number) => {
+                        if (rowNumber === 1) {
+                            row?.model?.cells?.forEach((item, index) => {
+                                if (item?.value?.toString()) {
+                                    peopleDiLayCom.push({ name: item?.value?.toString()?.trim() ?? '', id: index, label: Array.from(item?.address?.toString())[0] ?? '' });
+                                }
+                            });
+                        }
+                        if (rowNumber > 2) {
+                            const values = row?.model?.cells?.map(cell => cell?.value?.toString().trim());
+                            const day = dayjs(values ? values[0] : '').format('DD/MM/YYYY');
+                            const dayTransactionIndex = data.findIndex(item => item.day === day);
+                            if (dayTransactionIndex > -1) {
+                                row?.model?.cells?.forEach((item, index) => {
+                                    const fill = item?.style?.fill as unknown as any;
+                                    if (fill.pattern == 'solid') {
+                                        const person = peopleDiLayCom.find(person => person.label == Array.from(item?.address.toString())[0]);
+                                        const personDayIndex = data[dayTransactionIndex].people.findIndex(item => item.person.name.toLowerCase() == person?.name.toLowerCase());
+                                        if (dayTransactionIndex === 0 || dayTransactionIndex === 7) {
+                                        }
+                                        if (personDayIndex > -1) {
+                                            data[dayTransactionIndex].people[personDayIndex].delivery = true;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
                     setDays(data);
                 }
                 return false;
